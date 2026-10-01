@@ -1,0 +1,538 @@
+; *****************************************************************************************************************************
+; \navGrpBegin "Directives"
+; *****************************************************************************************************************************
+
+    ; *************************************************************************************************************************
+    ; !!! The set directives overwrites the configuration dialog settings !!!
+    ; *************************************************************************************************************************
+
+    ; *************************************************************************************************************************
+    ;  \navSep "Editor config"
+    ; *************************************************************************************************************************
+        #set editor::tabIndent,                         4
+
+    ; *************************************************************************************************************************
+    ; \navSep "Xilinx PicoBlaze core configuration"
+    ; *************************************************************************************************************************
+        #ifDef proc::xPblze6
+    
+            #set proc::xPblze6::scrpdSize,              64                      ; [64, 128, 256]
+;           #set proc::xPblze6::scrpdioDev,             ioDev::yourDev
+            #set proc::xPblze6::intVector,              1023                    ; [0 to 4095]
+            #set proc::xPblze6::clkFreq,                80000000                ; in Hz
+            
+        #elseIf proc::xPblze3
+    
+;           #set proc::XPblze3::scrpdioDev,             ioDev::yourDev
+            #set proc::XPblze3::clkFreq,                80000000                ; in Hz
+        #endIf
+        
+    ; *************************************************************************************************************************
+    ;  \navSep "Instruction memory config"
+    ; *************************************************************************************************************************
+        #set instmem::pageSize,                         1024
+        #set instmem::pageCount,                        1
+;       #set instmem::sharedMemLocation,                hiMem                   ; [ hiMem, loMem ]
+
+    ; *************************************************************************************************************************
+    ;  \navSep "ioDevice for instruction memory"
+    ; *************************************************************************************************************************
+        #set ioDev::page0::en,                          true                    ; [ true | false ]
+        #set ioDev::page0::type,                        mem                     ; [ mem | fifo | reg ]
+        #set ioDev::page0::size,                        1024                    ; Multiple of 2
+        #set ioDev::page0::baseAddr,                    0x00
+        #set ioDev::page0::simEn,                       false                   ; Enabling IO device in simulator
+;       #set ioDev::page0::simAccessMode,               rd                      ; [ rdWr, rd, wr ]
+    
+        #set ioDev::page0::initValue,                   0x00000                 ; Initial value
+    
+;       #set ioDev::page0::value,                       0x33, 0x44, 0x55
+;       #set ioDev::page0::value,                       0x10: 0x33, 0x44, 0x55
+;       #set ioDev::page0::value,                       0x01: 0x33
+;       #set ioDev::page0::value,                       0x02: 0x44
+;       #set ioDev::page0::value,                       append: 0x33, 0x44, 0x55
+;       #set ioDev::page0::value,                       append: 0x66, 0x77, 0x88
+
+        #set ioDev::page0::value,                       instMem
+;       #set ioDev::page0::value,                       instMem[page0]
+;       #set ioDev::page0::value,                       instMem[0..1023]
+;       #set ioDev::page0::value,                       instMem[page0][7..0]
+;       #set ioDev::page0::value,                       instMem[0..1023][7..0]
+;       #set ioDev::page0::value,                       instMem[1023..0]
+    
+;       #set ioDev::page0::vhdlEn,                      true                    ; Enable/disable vhdl output
+;       #set ioDev::page0::vhdlEntityName,              "vhdlPblzeRom"          ; VHDL entity name
+;       #set ioDev::page0::vhdlTmplFile,                "tmpl.vhd"              ; VHDL template file
+;       #set ioDev::page0::vhdlTargetFile,              "out.vhd"               ; VHDL target file
+    
+;       #set ioDev::page0::verilogEn,                   true                    ; Enable/disable verilog output
+;       #set ioDev::page0::verilogEntityName,           "verilogPblzeRom"       ; VHDL entity name
+;       #set ioDev::page0::verilogTmplFile,             "tmpl.v"                ; VHDL template file
+;       #set ioDev::page0::verilogTargetFile,           "out.v"                 ; VHDL target file
+    
+;       #set ioDev::page0::hexEn,                       true                    ; Enable/disable hex output
+;       #set ioDev::page0::hexTargetFile,               "out.hex"               ; Hex target file
+    
+;       #set ioDev::page0::memEn,                       true                    ; Enable/disable mem output
+;       #set ioDev::page0::memTargetFile,               "out.mem"               ; Mem target file
+;       #set ioDev::page0::memGapStuffing,              true                    ; Mem gap stuffing enable: [ true | false ]
+
+    ; *************************************************************************************************************************
+    ; \navSep "rxFIFO"
+    ;
+    ; Setting up a small FIFO for simulation purposes.
+    ; *************************************************************************************************************************
+    
+        ; rxFIFO data
+        #set ioDev::rxFIFO::en,                 true                    ; [ true | false ]
+        #set ioDev::rxFIFO::type,               fifo                    ; [ mem | fifo | reg ]
+        #set ioDev::rxFIFO::size,               32                      ; Multiple of 2
+        #set ioDev::rxFIFO::baseAddr,           0x20
+        #set ioDev::rxFIFO::simEn,              true                    ; Enabling IO device in simulator
+        #set ioDev::rxFIFO::simAccessMode,      rd                      ; [ rdWr, rd, wr ]
+    
+        #set ioDev::rxFIFO::initValue,          0x00000                 ; Initial value
+
+        #set ioDev::rxFIFO::value,              append: 0x01, 0x89, 0x8d, 0x8a, 0xe7, 0xc0, 0xa0, 0x04
+        #set ioDev::rxFIFO::value,              append: 0x01, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x04
+
+    ; *************************************************************************************************************************
+    ; \navHw "Register renaming"
+    ; *************************************************************************************************************************
+        #equ reg_work,          sF
+    
+    ; *************************************************************************************************************************
+    ; \navHw "Port addresses"
+    ; *************************************************************************************************************************
+        #equ busAddr_intReg,    0x01
+        #equ busAddr_dbg,       0xFF
+        #equ light1A,           0x1A
+        #equ light1B,           0x1B
+        #equ light1C,           0x1C
+        #equ light1D,           0x1D
+        #equ light1E,           0x1E
+        #equ light2A,           0x2A
+        #equ light2B,           0x2B
+        #equ light2C,           0x2C
+        #equ light2D,           0x2D
+        #equ light2E,           0x2E
+        #equ light3A,           0x3A
+        #equ light3B,           0x3B
+        #equ light3C,           0x3C
+        #equ light3D,           0x3D
+        #equ light3E,           0x3E
+        #equ light4A,           0x4A
+        #equ light4B,           0x4B
+        #equ light4C,           0x4C
+        #equ light4D,           0x4D
+        #equ light4E,           0x4E
+        #equ tramsensor,        0x0A
+        #equ failure,           0x0B
+        
+; *****************************************************************************************************************************
+; \navGrpEnd
+; \navGrpBegin "Sources"
+; *****************************************************************************************************************************
+
+; *****************************************************************************************************************************
+; Main function
+; *****************************************************************************************************************************
+
+; Signal bit encoding:
+; red        = 100 = 4
+; yellow     = 010 = 2
+; red+yellow = 110 = 6
+; green      = 001 = 1  
+
+main:
+    
+                    int     disable                 
+                    load s0, 0
+                    load s7, 0                  ; Clear tram priority request flag
+                    load sA, 6                  ; Red + Yellow mask (110b)
+                    load sB, 4                  ; Red mask (100b)
+                    load sC, 2                  ; Yellow mask (010b)
+                    load sD, 1                  ; Green mask (001b)
+                    load sE, 0                  ; Off mask (000b)
+                    ; Initial setup: set all traffic lights to red
+                    CALL all_red
+                    
+
+    mainLoop:       
+
+            CALL green_main_street
+
+            CALL main_street_turns
+            TEST s7, 1                          ; Check if turns phase was aborted by tram
+            JUMP NZ, tram_override
+
+            call side_street_green
+            TEST s7, 1                          ; Check if side street phase was aborted by tram
+            JUMP NZ, tram_override
+
+            JUMP mainLoop
+
+
+; timeloop: 1 iter = 100 ns
+; tl2:      1 iter = timeloop * 255: 25500 ns + 125 ns = 25625 ns
+; tl3:      1 iter = tl2 * 255 = 6 534 375 ns + 125 ns = 0.006535 s
+; tl4:      1 iter = 1.66 s | 1 min = 35 cycles
+    
+timeloop:
+        
+        ADD s0, 1
+        TEST s0, 0xFF
+        JUMP Z, tl2
+        JUMP timeloop
+        
+        
+        tl2:
+        LOAD s0, 0
+        ADD s1, 1
+        TEST s1, 0xFF
+        JUMP Z, tl3
+        JUMP timeloop
+        
+        tl3:
+        LOAD s1, 0
+        ADD s2, 1
+        TEST s2, 0xFF
+        JUMP Z, tl4
+        JUMP check_tram_sensor                  ; Poll tram sensor every ~6.5 ms
+        
+        
+        tl4:
+        LOAD s2, 0
+        ADD s3, 1
+        TEST s3, s4
+        RET Z
+        JUMP timeloop
+
+
+; Routine handling system failure (all yellow lights blinking)
+lights_failure:
+        
+        ; Check if the failure port is set to active (low level = 0)
+        RDPRT s6, failure 
+        TEST s6, 1
+        RET NZ
+                
+                        
+        ; Turn lights on (yellow)                
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 1
+        CALL timeloop
+        
+        WRPRT sC, light1A
+        WRPRT sC, light1B
+        WRPRT sC, light1C
+        WRPRT sC, light1D
+        WRPRT sC, light1E
+        
+        WRPRT sC, light2C
+        WRPRT sC, light2D
+        
+        WRPRT sC, light3A
+        WRPRT sC, light3B
+        WRPRT sC, light3C
+        WRPRT sC, light3D
+        WRPRT sC, light3E
+        
+        WRPRT sC, light4B
+        WRPRT sC, light4C
+        
+        ; Turn lights off
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 1
+        CALL timeloop
+        
+        WRPRT sE, light1A
+        WRPRT sE, light1B
+        WRPRT sE, light1C
+        WRPRT sE, light1D
+        WRPRT sE, light1E
+        
+        WRPRT sE, light2C
+        WRPRT sE, light2D
+        
+        WRPRT sE, light3A
+        WRPRT sE, light3B
+        WRPRT sE, light3C
+        WRPRT sE, light3D
+        WRPRT sE, light3E
+        
+        WRPRT sC, light4B
+        WRPRT sC, light4C
+        
+        JUMP lights_failure
+        
+
+  
+        
+green_main_street:
+
+        LOAD s8, 0                              ; Phase flag: 0 = non-conflicting (tram ignore)
+
+        RDPRT s6, failure
+        TEST s6, 1
+        CALL Z, lights_failure
+
+        ; Red clearance / pre-stage delay
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 7
+        CALL timeloop
+        
+        ; Red + Yellow
+        WRPRT sA, light1C
+        WRPRT sA, light1D
+        WRPRT sA, light3C
+        WRPRT sA, light3D
+        
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 7
+        CALL timeloop
+        
+        ; Green
+        WRPRT sD, light1A
+        WRPRT sD, light1C
+        WRPRT sD, light1D
+        WRPRT sD, light2A
+        WRPRT sD, light2E
+        WRPRT sD, light3A
+        WRPRT sD, light3C
+        WRPRT sD, light3D
+        WRPRT sD, light4A
+        WRPRT sD, light4E
+        
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 70
+        CALL timeloop
+        
+        ; Yellow
+        WRPRT sC, light1C
+        WRPRT sC, light1D
+        WRPRT sC, light3C
+        WRPRT sC, light3D
+        
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 7
+        CALL timeloop
+        
+        ; Red
+        WRPRT sB, light1A
+        WRPRT sB, light1C
+        WRPRT sB, light1D
+        WRPRT sB, light2A
+        WRPRT sB, light2E
+        WRPRT sB, light3A
+        WRPRT sB, light3C
+        WRPRT sB, light3D
+        WRPRT sB, light4A
+        WRPRT sB, light4E
+        
+        RET
+
+side_street_green:
+
+        LOAD s8, 1                              ; Phase flag: 1 = conflicting phase (tram monitored)
+
+        RDPRT s6, failure
+        TEST s6, 1
+        CALL Z, lights_failure
+
+        ; Red clearance
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 7
+        CALL timeloop
+
+        ; Red + Yellow
+        WRPRT sA, light2C
+        WRPRT sA, light2D
+        WRPRT sA, light4B
+        WRPRT sA, light4C
+
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 7
+        CALL timeloop
+
+        ; Green
+        WRPRT sD, light2C
+        WRPRT sD, light2D
+        WRPRT sD, light4B
+        WRPRT sD, light4C
+
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 35
+        CALL timeloop
+
+        ; Yellow
+        WRPRT sC, light2C
+        WRPRT sC, light2D
+        WRPRT sC, light4B
+        WRPRT sC, light4C
+
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 7
+        CALL timeloop
+
+        ; Red
+        WRPRT sB, light2C
+        WRPRT sB, light2D
+        WRPRT sB, light4B
+        WRPRT sB, light4C
+
+        RET
+
+main_street_turns:
+
+        LOAD s8, 1                              ; Phase flag: 1 = conflicting phase (tram monitored)
+
+        RDPRT s6, failure
+        TEST s6, 1
+        CALL Z, lights_failure
+        
+        ; Red clearance
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 7
+        CALL timeloop
+        
+        ; Red + Yellow
+        WRPRT sA, light1B
+        WRPRT sA, light1E
+        WRPRT sA, light2B                       ; Side street right turn
+        WRPRT sA, light3B
+        WRPRT sA, light3E
+        WRPRT sA, light4D                       ; Side street right turn
+        
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 7
+        CALL timeloop
+        
+        ; Green
+        WRPRT sD, light1B
+        WRPRT sD, light1E
+        WRPRT sD, light2B                       ; Side street right turn
+        WRPRT sD, light3B
+        WRPRT sD, light3E
+        WRPRT sD, light4D                       ; Side street right turn
+
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 35
+        CALL timeloop
+
+        ; Yellow
+        WRPRT sC, light1B
+        WRPRT sC, light1E
+        WRPRT sC, light2B                       ; Side street right turn
+        WRPRT sC, light3B
+        WRPRT sC, light3E
+        WRPRT sC, light4D                       ; Side street right turn
+
+        LOAD s0, 0
+        LOAD s1, 0
+        LOAD s2, 0
+        LOAD s3, 0
+        LOAD s4, 7
+        CALL timeloop
+
+        ; Red
+        WRPRT sB, light1B
+        WRPRT sB, light1E
+        WRPRT sB, light2B                       ; Side street right turn
+        WRPRT sB, light3B
+        WRPRT sB, light3E
+        WRPRT sB, light4D                       ; Side street right turn
+
+        RET
+
+all_red:
+
+        WRPRT sB, light1A
+        WRPRT sB, light1B
+        WRPRT sB, light1C
+        WRPRT sB, light1D
+        WRPRT sB, light1E
+        
+        WRPRT sB, light2A
+        WRPRT sB, light2B
+        WRPRT sB, light2C
+        WRPRT sB, light2D
+        WRPRT sB, light2E
+        
+        WRPRT sB, light3A
+        WRPRT sB, light3B
+        WRPRT sB, light3C
+        WRPRT sB, light3D
+        WRPRT sB, light3E
+        
+        WRPRT sB, light4A
+        WRPRT sB, light4B
+        WRPRT sB, light4C
+        WRPRT sB, light4D
+        WRPRT sB, light4E
+        
+        RET
+
+check_tram_sensor:
+
+        TEST s8, 1                              ; Only check tram during conflicting phases
+        JUMP Z, timeloop
+
+        RDPRT s5, tramsensor
+        TEST s5, 1
+        JUMP NZ, timeloop                       ; No tram detected -> continue timing loop
+        
+        LOAD s7, 1                              ; Set tram priority flag
+        RET                                     ; Early exit from timeloop to clear phase safely
+
+tram_override:
+    
+        LOAD s7, 0                              ; Reset priority flag
+        JUMP mainLoop                           ; Restart sequence directly at green_main_street
+
+; *****************************************************************************************************************************
+; Interrupt service routine
+; *****************************************************************************************************************************
+
+; *****************************************************************************************************************************
+; \navGrpEnd
+; *****************************************************************************************************************************
