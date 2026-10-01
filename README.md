@@ -21,29 +21,44 @@ Key features:
 The intersection manages 4 approaches, a central dual-direction tramway (North-South axis), and 20 independently addressed signal heads.
 
 ```
-                   [APPROACH 1 - NORTH]
-                   | 1B | 1C | 1A | 1D | 1E |
-                   | L  | S  | T  | S  | R  |
-                   | v  | v  | v  | v  | v  |
-=== 2A [Ped] ======================================= 4A [Ped] ===
------------------------------------------------------------------
-<-- 2D [L]                                             ^ 4E [Ped]
-<-- 2C [S]                  INTERSECTION               | 4D [R] <--
---> 2B [R]                      CORE                   | 4C [S] <--
---- 2E [Ped]                                           | 4B [L] <--
------------------------------------------------------------------
-=== [Ped] =======================================================
-                   | ^  | ^  | ^  | ^  | ^  |
-                   | 3E | 3D | 3A | 3C | 3B |
-                   | R  | S  | T  | S  | L  |
-                   [APPROACH 3 - SOUTH]
+                                 [APPROACH 1 - NORTH]
+                                |   |   ||   |   |   |   || ^ |
+                                | T | T ||   |   |   |   || E |
+                                | R | R || v | v | v | v || X |
+                                | A | A || 1B| 1C| 1D| 1E|| I |
+                                | M | M ||[R]|[S]|[S]|[L]|| T |
+                                | 1A| 3A||   |   |   |   ||   |
+                                | v | ^ ||   |   |   |   ||   |
+-----------------4A [Ped]-------+---+---++---+---+---+---++---+-------2A [Ped]-----------------
+<-- EXIT (WB)                   | # | # |                     | 2B [R]   <-- RIGHT LANE
+                                | # | # |                     | 2C [S]   <-- (Approach 2)
+--------------------------------+ # | # +    INTERSECTION     +--------------------------------
+--> LEFT LANE:  4B [L+S]        | # | # |        CORE         | 2D [L+S] <-- LEFT LANE
+                                | # | # |                     |              (Approach 2)
+--------------------------------+ # | # +                     +--------------------------------
+--> RIGHT LANE: 4C [S]          | # | # |                     |
+                4D [R]          | # | # |                     | EXIT (EB) <--
+-----------------4E [Ped]-------+---+---++---+---+---+---++---+-------2E [Ped]-----------------
+                                | v | ^ || v |   |   |   ||   |
+                                | 1A| 3A|| E | 3B| 3C| 3D|| 3E|
+                                | T | T || X |[L]|[S]|[S]||[R]|
+                                | R | R || I | ^ | ^ | ^ || ^ |
+                                | A | A || T |   |   |   ||   |
+                                | M | M ||   |   |   |   ||   |
+                                [APPROACH 3 - SOUTH]
 
 Legend:
-- T (1A, 3A)     : Tram signals
-- S              : Through / straight movement
-- L              : Left turn
-- R              : Right turn
-- 2A, 2E, 4A, 4E : Pedestrian crosswalks
+- 1A, 3A         : Dedicated dual tram tracks (NS & SN) along the western edge
+- 1B, 3B         : Left-turn lanes [L]
+- 1C/1D, 3C/3D   : Dual straight/through lanes [S]
+- 1E, 3E         : Right-turn lanes [R]
+- 4B, 2D         : Left lane (Shared Left + Straight: [L+S])
+- 4C/4D, 2C/2B   : Right lane (Straight [S] + dedicated Right-turn signal [R])
+- EXIT (WB/EB)   : Clearance / outbound road lanes
+- 4A, 4E         : Western crosswalks (spanning Approach 4 lanes)
+- 2A, 2E         : Eastern crosswalks (spanning Approach 2 lanes)
+- #              : Tram conflict points with westbound traffic
+
 ```
 
 ### Signal Encoding (Active-High)
