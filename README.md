@@ -49,9 +49,9 @@ The intersection manages 4 approaches, a central dual-direction tramway (North-S
 
 Legend:
 - 1A, 3A         : Dedicated dual tram tracks (NS & SN) along the western edge
-- 1B, 3B         : Left-turn lanes [L]
+- 1B, 3E         : Right-turn lanes [R]
 - 1C/1D, 3C/3D   : Dual straight/through lanes [S]
-- 1E, 3E         : Right-turn lanes [R]
+- 1E, 3E         : Left-turn lanes [L]
 - 4B, 2D         : Left lane (Shared Left + Straight: [L+S])
 - 4C/4D, 2C/2B   : Right lane (Straight [S] + dedicated Right-turn signal [R])
 - EXIT (WB/EB)   : Clearance / outbound road lanes
