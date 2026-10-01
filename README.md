@@ -20,7 +20,7 @@ Key features:
 
 The intersection manages 4 approaches, a central dual-direction tramway (North-South axis), and 20 independently addressed signal heads.
 
-\`\`\`
+```
                    [APPROACH 1 - NORTH]
                    | 1B | 1C | 1A | 1D | 1E |
                    | L  | S  | T  | S  | R  |
@@ -44,7 +44,7 @@ Legend:
 - L              : Left turn
 - R              : Right turn
 - 2A, 2E, 4A, 4E : Pedestrian crosswalks
-\`\`\`
+```
 
 ### Signal Encoding (Active-High)
 Control signals are dispatched to ports as 3-bit bitmasks:
@@ -74,7 +74,7 @@ Traffic flow transitions deterministically through a three-phase finite state ma
 
 Time intervals are generated via a four-stage nested delay loop (timeloop -> tl2 -> tl3 -> tl4), calibrated against the system clock frequency.
 
-\`\`\`
+```
             +---------------------------------+
             |          System Reset           |
             | (Init s0..sE, s7=0, s8=0, all_red)
@@ -100,7 +100,7 @@ Time intervals are generated via a four-stage nested delay loop (timeloop -> tl2
      |                [ Is s7 == 1? ] --- YES ----------+
      |                       | (NO)
      +-----------------------+
-\`\`\`
+```
 
 ### Tram Detection & Stack Integrity (Safe Exit via RET)
 1. Low-Jitter Polling (tl3): The tram sensor is polled once every cycle of tl3 (~6.5 ms). This avoids timing jitter in the innermost delay loop (tl1).
